@@ -29,7 +29,20 @@ public class InventorySystem {
         String command;
 
         while (true) {
-            System.out.println("Enter command :\naddCustomer, addProduct, addOrder, \nlistCustomer, listProducts, listOrders, \nupdateCustomer, updateProduct, \ndeleteCustomer, deleteProduct, deleteOrder, \nexit ");
+            System.out.println("Enter command:\n" +
+                    "  - addCustomer\n" +
+                    "  - addProduct\n" +
+                    "  - addOrder\n" +
+                    "  - listCustomer\n" +
+                    "  - listProducts\n" +
+                    "  - listOrders\n" +
+                    "  - updateCustomer\n" +
+                    "  - updateProduct\n" +
+                    "  - deleteCustomer\n" +
+                    "  - deleteProduct\n" +
+                    "  - deleteOrder\n" +
+                    "  - exit");
+
             command = scanner.nextLine();
 
             if (command.equals("exit")) {
