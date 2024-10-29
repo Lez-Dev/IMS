@@ -29,7 +29,7 @@ public class InventorySystem {
         String command;
 
         while (true) {
-            System.out.println("Enter command (addCustomer, addProduct, addOrder, exit): ");
+            System.out.println("Enter command :\naddCustomer, addProduct, addOrder, \nlistCustomer, listProducts, listOrders, \nupdateCustomer, updateProduct, \ndeleteCustomer, deleteProduct, deleteOrder, \nexit ");
             command = scanner.nextLine();
 
             if (command.equals("exit")) {
@@ -48,31 +48,43 @@ public class InventorySystem {
                 break;
 
             case "addProduct":
-                System.out.println("Enter ID, Name, Price: ");
-                //
+                addProduct(scanner);
                 break;
 
             case "addOrder":
-                System.out.println("Enter Order ID, Customer ID, Product ID, Quantity: ");
-                if (//customer != null && product != null
-                ) {
-                    //create order
-                    //} else {
-                    //System.out.println("Invalid customer or product ID.");
-                }
+                addOrder(scanner);
+                break;
+
+            case "listCustomer":
+                listCustomers();
+                break;
+
+            case "listProducts":
+                listProducts();
+                break;
+
+            case "listOrders":
+                listOrders();
+                break;
+
+            case "updateCustomer":
+                updateCustomer(scanner);
+                break;
+
+            case "updateProduct":
+                updateProduct(scanner);
                 break;
 
             case "deleteCustomer":
-                System.out.println("Confirm ID of Customer");
-                // deleting customer...
+                deleteCustomer(scanner);
                 break;
 
             case "deleteProduct":
-                System.out.println("Confirm ID of Product");
+                deleteProduct(scanner);
                 break;
 
             case "deleteOrder":
-                System.out.println("Confirm ID of Order");
+                deleteOrder(scanner);
                 break;
 
             default:
@@ -90,31 +102,120 @@ public class InventorySystem {
         System.out.println("Customer added: " + customerName + " (ID: " + customerId + ")");
     }
 
+    private static void addProduct(Scanner scanner) {
+        System.out.println("Enter Name, Price: ");
+        String[] productInfo = scanner.nextLine().split(",");
+        String productName = productInfo[0].trim();
+        double productPrice = Double.parseDouble(productInfo[1].trim());
+        int productId = productIdCounter++;
+        Product product = new Product(productId, productName, productPrice);
+        products.put(String.valueOf(productId), product);
+        System.out.println("Product added: " + productName + " (ID: " + productId + ")");
+    }
+
+    private static void addOrder(Scanner scanner) {
+        System.out.println("Enter Customer ID, Product ID:");
+        String[] orderInfo = scanner.nextLine().split(",");
+        String orderCustomerId = orderInfo[0].trim();
+        String orderProductId = orderInfo[1].trim();
+
+        Customer orderCustomer = customers.get(orderCustomerId);
+        Product orderProduct = products.get(orderProductId);
+        if (orderCustomer != null && orderProduct != null) {
+            int orderId = orderIdCounter++;
+            Order order = new Order(orderId, orderCustomer.getId(), orderProduct.getId());
+            orders.put(String.valueOf(orderId), order);
+            System.out.println("Order added for customer: " + orderCustomer.getName() + " (Order ID: " + orderId + ")");
+        } else {
+            System.out.println("Invalid customer or product ID.");
+        }
+    }
+
+    private static void listCustomers() {
+        System.out.println("Customers: ");
+        for (Customer customer : customers.values()) {
+            System.out.println(customer);
+        }
+    }
+
+    private static void listProducts() {
+        System.out.println("Products: ");
+        for (Product product : products.values()) {
+            System.out.println(product);
+        }
+    }
+
+    private static void listOrders() {
+        System.out.println("Orders: ");
+        for (Order o : orders.values()) {
+            System.out.println(o);
+        }
+    }
 
 
-    private void updateCustomers (int id, String name){
-        if (customers.containsKey(id)) {
-            customers.get(id).setName(name);
-            System.out.println("Updated Customer: " + customers.get(id));
+    private static void updateCustomer(Scanner scanner) {
+        System.out.println("Enter Customer ID and new Name: ");
+        String[] updateInfo = scanner.nextLine().split(",");
+        String customerId = updateInfo[0].trim();
+        String newName = updateInfo[1].trim();
+
+        if (customers.containsKey(customerId)) {
+            customers.get(customerId).setName(newName);
+            System.out.println("Updated Customer: " + customers.get(customerId));
         } else {
             System.out.println("Customer not found");
         }
     }
-    private void updateProduct ( int id, String name){
-        if (products.containsKey(id)) {
-            products.get(id).setName(name);
-            System.out.println("Updated Customer: " + products.get(id));
+
+    private static void updateProduct(Scanner scanner) {
+        System.out.println("Enter Product ID and new Name/Price (format: name,price): ");
+        String[] updateInfo = scanner.nextLine().split(",");
+        String productId = updateInfo[0].trim();
+
+        if (products.containsKey(productId)) {
+            String newName = updateInfo[1].trim();
+            double newPrice = Double.parseDouble(updateInfo[2].trim());
+            Product product = products.get(productId);
+            product.setName(newName);
+            product.setPrice(newPrice);
+            System.out.println("Updated Product: " + product);
         } else {
-            System.out.println("Customer not found");
+            System.out.println("Product not found");
         }
     }
-    private void updateOrder ( int id, String name){
-        if (orders.containsKey(id)) {
-            orders.get(id).setName(name);
-            System.out.println("Updated Customer: " + orders.get(id));
+
+    private static void deleteCustomer(Scanner scanner) {
+        System.out.println("Enter Customer ID to delete: ");
+        String customerId = scanner.nextLine().trim();
+
+        if (customers.remove(customerId) != null) {
+            System.out.println("Customer with ID " + customerId + " deleted.");
         } else {
-            System.out.println("Customer not found");
+            System.out.println("Customer not found.");
         }
     }
+
+    private static void deleteProduct(Scanner scanner) {
+        System.out.println("Enter Product ID to delete: ");
+        String productId = scanner.nextLine().trim();
+
+        if (products.remove(productId) != null) {
+            System.out.println("Product with ID " + productId + " deleted.");
+        } else {
+            System.out.println("Product not found.");
+        }
+    }
+
+    private static void deleteOrder(Scanner scanner) {
+        System.out.println("Enter Order ID to delete: ");
+        String orderId = scanner.nextLine().trim();
+
+        if (orders.remove(orderId) != null) {
+            System.out.println("Order with ID " + orderId + " deleted.");
+        } else {
+            System.out.println("Order not found.");
+        }
+    }
+
 }
 
